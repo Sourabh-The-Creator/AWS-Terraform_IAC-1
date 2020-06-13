@@ -1,0 +1,54 @@
+resource "aws_ebs_volume" "myvalume" {
+depends_on = [
+		aws_instance.mytask1
+	]
+  availability_zone = aws_instance.mytask1.availability_zone
+  size              = 1
+
+  tags = {
+    Name = "ebsval_for_task"
+  }
+}
+
+
+resource "aws_volume_attachment" "ebs_att" {
+
+
+	depends_on = [
+		aws_ebs_volume.myvalume
+	]
+
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.myvalume.id
+  instance_id = aws_instance.mytask1.id
+
+}
+
+resource "null_resource" "mount"{
+
+depends_on = [
+		aws_volume_attachment.ebs_att
+	]
+  connection {
+
+	type = "ssh"
+	user = "ec2-user"
+	private_key = tls_private_key.task1_key.private_key_pem
+	host = aws_instance.mytask1.public_ip
+
+        }
+	
+	
+
+  provisioner "remote-exec"{
+		
+		inline = [
+			
+		"sudo mkfs.ext4 /dev/sdh",
+                "sudo mount /dev/sdh /var/www/html",
+		"sudo rm -rf /var/www/html/*",
+		"sudo git clone https://github.com/Sourabh-The-Creator/mycode.git /var/www/html"
+		]
+	}
+
+}
