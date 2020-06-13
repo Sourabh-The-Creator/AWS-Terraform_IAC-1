@@ -1,0 +1,4 @@
+//creating key pair
+resource "tls_private_key" "task1_key" {
+  algorithm = "RSA"
+}
