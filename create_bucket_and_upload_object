@@ -1,0 +1,20 @@
+resource "aws_s3_bucket" "taskbucket1" {
+  bucket = "taskbucket1"
+  acl    = "public-read"
+
+  tags = {
+	Name = "taskbucket1"
+  }
+}
+
+
+locals {
+  s3_origin_id = "myS3Origin"
+}
+
+resource "aws_s3_bucket_object" "taskbucket1" {
+  bucket = "taskbucket1"
+  key    = "sampleimage.jpeg"
+  source = "D:/terraform/task-1/ec2/sampleimage.jpeg"
+}
+
