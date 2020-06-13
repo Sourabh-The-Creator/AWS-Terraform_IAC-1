@@ -2,3 +2,9 @@
 resource "tls_private_key" "task1_key" {
   algorithm = "RSA"
 }
+
+module "key_pair" {
+  source = "terraform-aws-modules/key-pair/aws"
+  key_name   = "Task1_Key"
+  public_key = tls_private_key.task1_key.public_key_openssh
+}
